@@ -1,24 +1,18 @@
 <?php
 # model/guestbookModel.php
-/********************************
- * Model de la page livre d'or
- *******************************/
 
-// INSERTION d'un message dans le livre d'or
+
 
 /**
- * @param PDO $db
- * @param string $firstname
- * @param string $lastname
- * @param string $usermail
- * @param string $phone
- * @param string $postcode
- * @param string $message
- * @return bool
- * Fonction qui insère un message dans la base de données 'ti2web2026' et sa table 'guestbook'
- * Renvoie true si l'insertion a réussi, false sinon
- * Une requête préparée est utilisée pour éviter les injections SQL
- * Les données sont échappées pour éviter les injections XSS (protection backend)
+ * @param PDO    $db
+ * @param string $firstname    <= 100
+ * @param string $lastname     <= 100
+ * @param string $usermail     <= 200, doit être un email valide
+ * @param string $phone        <= 20, uniquement numérique
+ * @param string $postcode     == 4, uniquement numérique
+ * @param string $message      <= 500
+ * @return bool true si l'insertion a réussi, false sinon
+ 
  */
 function addGuestbook(PDO $db,
                     string $firstname,
@@ -29,99 +23,165 @@ function addGuestbook(PDO $db,
                     string $message
 ): bool
 {
-    // traitement des données backend (SECURITE)
+    
+    $firstname = trim($firstname);
+    $lastname  = trim($lastname);
+    $usermail  = trim($usermail);
+    $phone     = trim($phone);
+    $postcode  = trim($postcode);
+    $message   = trim($message);
 
-    // si pas de données complètes ou ne correspondant pas à nos attentes, on renvoie false
-    return false;
-    // requête préparée obligatoire !
+   
 
-    // si l'insertion a réussi
-    // on renvoie true
-    // sinon, on renvoie false
+    $firstname = htmlspecialchars($firstname, );
+    $lastname  = htmlspecialchars($lastname,  );
+    $usermail  = htmlspecialchars($usermail,  );
+    $phone     = htmlspecialchars($phone,     );
+    $postcode  = htmlspecialchars($postcode,  );
+    $message   = htmlspecialchars($message,   );
 
+   
+    if (mb_strlen($firstname) > 100) return false;
+    if (mb_strlen($lastname)  > 100) return false;
+    if (mb_strlen($usermail)  > 200) return false;
+    if (mb_strlen($phone)     >  20) return false;
+    if (mb_strlen($postcode)  !==  4) return false;
+    if (mb_strlen($message)   > 500) return false;
+
+   
+    try {
+        $sql = "INSERT INTO `guestbook`
+                    (`firstname`, `lastname`, `usermail`, `phone`, `postcode`, `message`)
+                VALUES
+                    (:firstname, :lastname, :usermail, :phone, :postcode, :message)";
+
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindValue(":firstname", $firstname, PDO::PARAM_STR);
+        $stmt->bindValue(":lastname",  $lastname,  PDO::PARAM_STR);
+        $stmt->bindValue(":usermail",  $usermail,  PDO::PARAM_STR);
+        $stmt->bindValue(":phone",     $phone,     PDO::PARAM_STR);
+        $stmt->bindValue(":postcode",  $postcode,  PDO::PARAM_STR);
+        $stmt->bindValue(":message",   $message,   PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        
+        $ok = ($stmt->rowCount() === 1);
+        $stmt->closeCursor();
+
+        return $ok;
+
+    } catch (PDOException $e) {
+        
+        die($e->getMessage());
+    }
 }
 
-/***************************
- * Sans le Bonus Pagination
- **************************/
 
-// SELECTION de messages dans le livre d'or par ordre de date croissante
 /**
  * @param PDO $db
- * @return array
- * Fonction qui récupère tous les messages du livre d'or par ordre de date croissante
- * venant de la base de données 'ti2web2026' et de la table 'guestbook'
- * Si pas de message, renvoie un tableau vide
+ * @return array tableau des messages du plus récent au plus ancien, ou tableau vide
  */
 function getAllGuestbook(PDO $db): array
 {
-    // try catch
-    // si la requête a réussi,
-    // bonne pratique, fermez le curseur
-    // renvoyer le tableau de(s) message(s)
-    return [];
+    try {
+        
+        $sql  = "SELECT `id`, `firstname`, `lastname`, `usermail`, `message`, `datemessage`
+                 FROM `guestbook`
+                 ORDER BY `datemessage` DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+
+        $messages = $stmt->fetchAll(); 
+
+        
+        $stmt->closeCursor();
+
+        
+        return $messages;
+
+    } catch (PDOException $e) {
+        die($e->getMessage());
+    }
 }
 
-/**************************
- * Pour le Bonus Pagination
- **************************/
 
-// SELECTION du nombre total de messages
 /**
  * @param PDO $db
- * @return int
- * Fonction qui compte le nombre total de messages dans la table 'guestbook'
+ * @return int nombre total de messages dans la table
  */
 function getNbTotalGuestbook(PDO $db): int
 {
+    try {
+        $sql  = "SELECT COUNT(*) AS `nb` FROM `guestbook`";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
 
-    // bonne pratique, fermez le curseur,
-    // renvoyez le nombre total de messages
-    return 0;
+        $row = $stmt->fetch();
+        $stmt->closeCursor();
 
+        return (int)($row["nb"] ?? 0);
+
+    } catch (PDOException $e) {
+        die("Erreur SQL (COUNT) : " . $e->getMessage());
+    }
 }
-// SELECTION de messages dans le livre d'or par ordre de date croissante
-// en lien avec la pagination
+
+
 /**
  * @param PDO $db
- * @param int $pageActu = 1
- * @param int $limit = 5
- * @return array
- * Fonction qui récupère les messages du livre d'or par ordre de date croissante
- * venant de la base de données 'ti2web2026' et de la table 'guestbook'
- * en utilisant une requête préparée (injection SQL), n'affiche que les messages
- * de la page courante
+ * @param int $pageActu page courante (1 par défaut)
+ * @param int $limit    nombre de messages par page
+ * @return array messages de la page courante (vide si aucun)
  */
-function getGuestbookPagination(PDO $db, int $pageActu=1, int $limit=5): array
+function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): array
 {
-    // Requête préparée obligatoire !
-    // Le $offset et le $limit sont des entiers, il faut donc les passer
-    // en paramètres de la requête préparée en tant qu'entiers !
-    // si la requête a réussi,
-    // bonne pratique, fermez le curseur
-    // renvoyer le tableau de(s) message(s) (vide si pas de résultats)
-    return [];
+    
+    if ($pageActu < 1) $pageActu = 1;
+    if ($limit    < 1) $limit    = 5;
+
+    $offset = ($pageActu - 1) * $limit;
+
+    try {
+        $sql  = "SELECT `id`, `firstname`, `lastname`, `usermail`, `message`, `datemessage`
+                 FROM `guestbook`
+                 ORDER BY `datemessage` DESC
+                 LIMIT :lim OFFSET :off";
+        $stmt = $db->prepare($sql);
+
+        
+        $stmt->bindValue(":lim", $limit,  PDO::PARAM_INT);
+        $stmt->bindValue(":off", $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $messages = $stmt->fetchAll();
+        $stmt->closeCursor();
+
+        return $messages;
+
+    } catch (PDOException $e) {
+        die("Erreur SQL (SELECT pagination) : " . $e->getMessage());
+    }
 }
 
-# Pour afficher la pagination dans la vue
-// FONCTION de pagination
+
 /**
- * @param int $nbtotalMessage
- * @param string $url
- * @param string $get
- * @param int $pageActu
- * @param int $perPage
- * @return string
- * Fonction qui génère le code HTML de la pagination
- * si le nombre de pages est supérieur à une.
+ * @param int    $nbtotalMessage  nombre total de messages
+ * @param string $url             base de l'URL (ex: "./?")
+ * @param string $get             nom de la variable GET (ex: "pg")
+ * @param int    $pageActu        page courante
+ * @param int    $perPage         messages par page
+ * @return string HTML de la pagination, "" si <= 1 page
  */
-function pagination(int $nbtotalMessage, string $url="./?", string $get="page", int $pageActu=1, int $perPage=5 ): string
+function pagination(int $nbtotalMessage, string $url = "./?", string $get = "page", int $pageActu = 1, int $perPage = 5): string
 {
     $sortie = "";
     if ($nbtotalMessage === 0) return "";
-    $nbPages = ceil($nbtotalMessage / $perPage);
+    $nbPages = (int)ceil($nbtotalMessage / $perPage);
     if ($nbPages == 1) return "";
-    $sortie .= "<p>";
+
+    $sortie .= "<p class='pagination'>";
     for ($i = 1; $i <= $nbPages; $i++) {
         if ($i === 1) {
             if ($pageActu === 1) {
@@ -147,5 +207,4 @@ function pagination(int $nbtotalMessage, string $url="./?", string $get="page", 
     }
     $sortie .= "</p>";
     return $sortie;
-
 }

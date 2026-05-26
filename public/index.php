@@ -14,52 +14,94 @@ require_once "../config.php";
 // chargement du modèle de la table guestbook
 require_once URL_BASE . "/model/guestbookModel.php";
 
-/*
- * Connexion à la base de données en utilisant PDO
- * Avec un try catch pour gérer les erreurs de connexion
- * Utilisez les constantes de config.php
- * Activez le mode d'erreur de PDO à Exception et
- * le mode fetch à tableau associatif
- */
+/* -----------------------------------------------------------------------------
+ * 2) Connexion à la base de données via PDO
+ *    - try/catch + classe Exception
+ *    - jeu de caractères utf8mb4
+ *    - fetch par défaut en tableau associatif
+ *    - erreurs en mode Exception
+ * --------------------------------------------------------------------------- */
+try {
+    $dsn = DB_DRIVER . ":host=" . DB_HOST
+         . ";port="     . DB_PORT
+         . ";dbname="   . DB_NAME
+         . ";charset="  . DB_CHARSET;
 
-/*
- * Si le formulaire a été soumis
- */
+    $db = new PDO($dsn, DB_LOGIN, DB_PWD, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+    ]);
+} catch (Exception $e) {
+    
+    die($e->getMessage());
+}
 
-// on appelle la fonction d'insertion dans la DB (addGuestbook())
+/* -----------------------------------------------------------------------------
+ * 3) Traitement du formulaire si soumission POST
+ *    Variable $messageRetour utilisée par la vue :
+ *      - null   : pas de soumission
+ *      - true   : insertion OK   → message vert
+ *      - false  : insertion KO   → message rouge
+ * --------------------------------------------------------------------------- */
+$messageRetour = null;
 
-// si l'insertion a réussi
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-// on redirige vers la page actuelle (ou on affiche un message de succès)
+    // On récupère les champs en s'assurant qu'ils sont des strings
+    // (cast explicite + isset = champ inexistant => "")
+    $firstname = isset($_POST["firstname"]) ? (string)$_POST["firstname"] : "";
+    $lastname  = isset($_POST["lastname"])  ? (string)$_POST["lastname"]  : "";
+    $usermail  = isset($_POST["usermail"])  ? (string)$_POST["usermail"]  : "";
+    $phone     = isset($_POST["phone"])     ? (string)$_POST["phone"]     : "";
+    $postcode  = isset($_POST["postcode"])  ? (string)$_POST["postcode"]  : "";
+    $message   = isset($_POST["message"])   ? (string)$_POST["message"]   : "";
 
-// sinon, on affiche un message d'erreur
+    // La validation/nettoyage est faite DANS le modèle (cf. consignes)
+    $messageRetour = addGuestbook(
+        $db,
+        $firstname,
+        $lastname,
+        $usermail,
+        $phone,
+        $postcode,
+        $message
+    );
+}
 
-/*
- * On récupère les messages du livre d'or
- */
+/* -----------------------------------------------------------------------------
+ * 4) Récupération des messages — BONUS PAGINATION
+ *    - on lit la page courante dans $_GET (ctype_digit pour ne laisser passer
+ *      que des chaînes 100% numériques, pas de signe, pas de point)
+ *    - on récupère le nombre total de messages
+ *    - on calcule le nombre de pages
+ *    - on récupère uniquement les messages de la page courante
+ *    - on génère le HTML de la pagination
+ * --------------------------------------------------------------------------- */
+$pageActu = 1;
+if (isset($_GET[PAGINATION_GET]) && ctype_digit((string)$_GET[PAGINATION_GET])) {
+    $pageActu = (int)$_GET[PAGINATION_GET];
+    if ($pageActu < 1) $pageActu = 1;
+}
 
-// on appelle la fonction de récupération de la DB (getAllGuestbook())
+$nbTotal = getNbTotalGuestbook($db);
 
-/*********************
- * Ou Bonus Pagination
- *********************/
+// On clampe $pageActu pour ne pas dépasser le nombre réel de pages
+$nbPages = (int)max(1, ceil($nbTotal / PAGINATION_NB));
+if ($pageActu > $nbPages) $pageActu = $nbPages;
 
-// on vérifie sur quelle page on est (et que c'est un string qui contient que des numériques sans "." ni "-" => ctype_digit) en utilisant la variable $_GET et les constantes de config.php
+// Messages de la page courante (vide si table vide)
+$listeMessages = getGuestbookPagination($db, $pageActu, PAGINATION_NB);
 
-# on compte le nombre total de messages (SQL)
+// HTML de la pagination (vide si <= 1 page)
+$htmlPagination = pagination($nbTotal, "./?", PAGINATION_GET, $pageActu, PAGINATION_NB);
 
-# on récupère la pagination
-
-# pour obtenir le $offset pour les messages (calcul)
-
-# on veut récupérer les messages de la page courante
-
-/**************************
- * Fin du Bonus Pagination
- **************************/
-
-// Appel de la vue
-
+/* -----------------------------------------------------------------------------
+ * 5) Chargement de la vue
+ * --------------------------------------------------------------------------- */
 include URL_BASE . "/view/guestbookView.php";
 
-// fermeture de la connexion (bonne pratique)
+/* -----------------------------------------------------------------------------
+ * 6) Fermeture propre de la connexion
+ * --------------------------------------------------------------------------- */
+$db = null;

@@ -141,3 +141,133 @@
    Bon travail !
    ========================================================================= */
 
+$(function () {
+
+    
+    const $form        = $("#guestbook-form");
+    const $messagesBox = $("#messages");
+
+    const $firstname = $("#firstname");
+    const $lastname  = $("#lastname");
+    const $usermail  = $("#usermail");
+    const $postcode  = $("#postcode");
+    const $phone     = $("#phone");
+    const $message   = $("#message");
+    const $rgpd      = $("#rgpd");
+
+    const $counter      = $("#char-counter");
+    const $toggleTheme  = $("#toggle-theme");
+    const $body         = $("body");
+
+    const regexEmail    = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+    const regexPostcode = /^\d{4}$/;
+    const regexPhone    = /^04\d{8}$/; 
+
+    function clearMessages() {
+        $messagesBox.empty();
+    }
+
+    function showErrors(errors) {
+        clearMessages();
+        const $ul = $("<ul/>", { "class": "msg-error-list" });
+        $.each(errors, function (_, err) {
+            $("<li/>", { "class": "msg-error", text: err }).appendTo($ul);
+        });
+        $messagesBox.append($ul);
+    }
+
+    function showSuccess(text) {
+        clearMessages();
+        $("<p/>", { "class": "msg-success", text: text }).appendTo($messagesBox);
+    }
+
+    
+    function updateCounter() {
+        const len = $message.val().length;
+        $counter.text(len + " / 300 caractères");
+        $counter.toggleClass("counter-warn", len >= 280);
+    }
+    $message.on("input", updateCounter);
+    updateCounter(); // état initial
+
+  
+    $form.on("submit", function (event) {
+
+        const errors = [];
+
+        
+        const vFirstname = $.trim($firstname.val());
+        const vLastname  = $.trim($lastname.val());
+        const vUsermail  = $.trim($usermail.val());
+        const vPostcode  = $.trim($postcode.val());
+        
+        const vPhone     = $phone.val().replace(/[\s.\-]/g, "");
+        const vMessage   = $.trim($message.val());
+
+        
+        if (vFirstname.length < 2) {
+            errors.push("Le prénom est obligatoire (2 caractères minimum).");
+        }
+
+        
+        if (vLastname.length < 2) {
+            errors.push("Le nom est obligatoire (2 caractères minimum).");
+        }
+
+        
+        if (!regexEmail.test(vUsermail)) {
+            errors.push("L'adresse e-mail n'est pas valide (ex : prenom.nom@mail.com).");
+        }
+
+        
+        if (!regexPostcode.test(vPostcode)) {
+            errors.push("Le code postal doit contenir exactement 4 chiffres.");
+        }
+
+        
+        if (!regexPhone.test(vPhone)) {
+            errors.push("Le numéro de téléphone doit commencer par 04 et contenir 10 chiffres (ex : 0498150882).");
+        } else {
+            
+            $phone.val(vPhone);
+        }
+
+        
+        if (vMessage.length < 10) {
+            errors.push("Le message doit contenir au moins 10 caractères.");
+        }
+        if (vMessage.length > 300) {
+            errors.push("Le message ne peut pas dépasser 300 caractères.");
+        }
+
+        
+        if (!$rgpd.is(":checked")) {
+            errors.push("Vous devez accepter le stockage de vos données personnelles.");
+        }
+
+        
+        if (errors.length > 0) {
+            
+            event.preventDefault();
+            showErrors(errors);
+            
+            $("html, body").animate({
+                scrollTop: $messagesBox.offset().top - 80
+            }, 300);
+        } else {
+            
+            showSuccess("Formulaire valide, envoi en cours...");
+        }
+    });
+
+    
+    $('#toggle-theme').on('click',function(){
+        $('body').toggleClass('dark-mode');
+    });
+
+    
+   
+
+});
+
+

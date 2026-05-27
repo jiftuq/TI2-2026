@@ -47,9 +47,9 @@ function dateFr(string $datemysql): string
             <div id="messages" class="messages" role="alert" aria-live="polite">
                 <?php
                 
-                if ($messageRetour === true) {
+                if ($insertOk === true) {
                     echo '<p class="msg-success">Merci pour votre nouveau message</p>';
-                } elseif ($messageRetour === false) {
+                } elseif ($insertOk === false) {
                     echo '<p class="msg-error">Problème lors de l\'envoi du message</p>';
                 }
                 ?>

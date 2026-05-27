@@ -1,217 +1,112 @@
-/* ============================================================================
-   style.css — Livre d'or TI2-2026
-   Inspiré des figures 1 / 2 / 3 des consignes :
-     - fond avec dégradé bleu → violet
-     - cartes "glassmorphism" (fond translucide + backdrop-filter blur)
-     - layout mobile-first : 480px (tablette) et 960px (desktop)
-   ============================================================================ */
-
-/* ---------- Variables ---------- */
-:root {
-    --bg-grad-1:    #1e3a8a;          /* bleu profond */
-    --bg-grad-2:    #4338ca;          /* indigo */
-    --bg-grad-3:    #6b21a8;          /* violet */
-
-    --glass-bg:     rgba(255, 255, 255, .08);
-    --glass-bg-2:   rgba(255, 255, 255, .12);
-    --glass-border: rgba(255, 255, 255, .18);
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, .15);
-
-    --input-bg:     rgba(255, 255, 255, .05);
-    --input-border: rgba(255, 255, 255, .15);
-
-    --text:         #f5f5fb;          /* blanc cassé */
-    --text-soft:    rgba(245, 245, 251, .75);
-    --text-mute:    rgba(245, 245, 251, .55);
-
-    --accent:       #fb923c;          /* orange (emails) */
-    --accent-hover: #f97316;
-    --success:      #22c55e;
-    --error:        #ef4444;
-}
-
-/* ---------- Dark mode : on fonce encore plus le fond ---------- */
-body.dark-mode {
-    --bg-grad-1:    #0b1233;
-    --bg-grad-2:    #1f1554;
-    --bg-grad-3:    #2e0c4f;
-
-    --glass-bg:     rgba(255, 255, 255, .04);
-    --glass-bg-2:   rgba(255, 255, 255, .07);
-    --glass-border: rgba(255, 255, 255, .10);
-
-    /* On ré-applique le gradient avec les variables darkifiées :
-       sans cette ligne, la propriété background du body garde son ancienne
-       valeur (calculée au moment de l'éval initiale des variables) */
-    background: linear-gradient(135deg,
-                var(--bg-grad-1) 0%,
-                var(--bg-grad-2) 50%,
-                var(--bg-grad-3) 100%);
-}
-
-/* ---------- Reset léger ---------- */
-*, *::before, *::after { box-sizing: border-box; }
-
+* { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
-
-/* Couleur de secours sur html (couvre le cas où body est plus court que la fenêtre) */
-html { background: var(--bg-grad-1); }
+html { background: #1e3a8a; }
 
 body {
     min-height: 100vh;
-    /* Le gradient est posé directement sur body : il s'étend automatiquement
-       à la hauteur du contenu, peu importe la taille de la page */
-    background: linear-gradient(135deg,
-                var(--bg-grad-1) 0%,
-                var(--bg-grad-2) 50%,
-                var(--bg-grad-3) 100%);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3a8a, #4338ca, #6b21a8);
+    color: #f5f5fb;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    transition: background .3s ease, color .3s ease;
+    transition: background .3s ease;
 }
 
-h1, h2, h3 { margin: 0 0 .5em; font-weight: 600; color: var(--text); }
-p          { margin: 0 0 .5em; }
-ul, li     { list-style: none; padding: 0; margin: 0; }
-
-/* ============================================================================
-   TOPBAR (carte glassmorphism flottante en haut)
-   ============================================================================ */
-.topbar {
-    padding: 16px;
+body.dark-mode {
+    background: linear-gradient(135deg, #0b1233, #1f1554, #2e0c4f);
 }
+
+h1, h2, h3 { margin: 0 0 .5em; font-weight: 600; }
+p { margin: 0 0 .5em; }
+ul, li { list-style: none; padding: 0; margin: 0; }
+
+.topbar { padding: 16px; }
+
 .topbar-inner {
-    
-    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 16px;
     padding: 14px 20px;
-    background: var(--glass-bg-2);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 20px;
-    box-shadow: var(--glass-shadow);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
-/* Logo Fm rond à gauche */
+body.dark-mode .topbar-inner {
+    background: rgba(255, 255, 255, .07);
+    border-color: rgba(255, 255, 255, .10);
+}
+
 .logo {
     flex-shrink: 0;
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--glass-bg-2);
+    background: rgba(255, 255, 255, .12);
     border: 2px solid rgba(255, 255, 255, .35);
-    color: var(--text);
     font-weight: 700;
-    font-size: .95rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    letter-spacing: .5px;
 }
 
-/* Titre + sous-titre au centre */
-.topbar-title {
-    flex: 1;
-    text-align: center;
-    min-width: 0;
-    gap: 24px;
-}
-.topbar-title h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-.topbar-title .subtitle {
-    margin: 2px 0 0;
-    color: var(--text-soft);
-    font-size: .85rem;
-}
+.topbar-title { flex: 1; text-align: center; }
+.topbar-title h1 { font-size: 1.5rem; }
+.subtitle { color: rgba(245, 245, 251, .75); font-size: .85rem; margin: 2px 0 0; }
 
-#top{
-    text-align: center;
-}
-
-/* Bouton toggle thème à droite */
 #toggle-theme {
     flex-shrink: 0;
-    background: var(--glass-bg-2);
-    color: var(--text);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, .12);
+    color: #f5f5fb;
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 12px;
     padding: 10px 14px;
     font-size: .85rem;
     cursor: pointer;
-    transition: background .15s ease;
     font-family: inherit;
 }
+
 #toggle-theme:hover { background: rgba(255, 255, 255, .18); }
 
-/* ============================================================================
-   CONTENEUR PRINCIPAL — empilé en mobile, 2 colonnes en desktop
-   ============================================================================ */
 .container {
-    
-    margin: 0 auto;
     padding: 8px 16px 64px;
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-.col-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-/* ---------- Image d'illustration ---------- */
 .illustration {
     width: 110px;
     height: 110px;
     object-fit: contain;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .25));
-    
 }
 
-/* ============================================================================
-   CARTE "GLASSMORPHISM"
-   ============================================================================ */
 .card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 20px;
-    box-shadow: var(--glass-shadow);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     padding: 24px;
 }
 
-.form-card {
-    width: 100%;
-}
-.form-card h2 {
-    margin: 0 0 18px;
-    font-size: 1.2rem;
+body.dark-mode .card {
+    background: rgba(255, 255, 255, .04);
+    border-color: rgba(255, 255, 255, .10);
 }
 
-/* ============================================================================
-   FORMULAIRE — mobile-first : labels au-dessus
-   ============================================================================ */
+.form-card { width: 100%; }
+.form-card h2 { font-size: 1.2rem; margin-bottom: 18px; }
+
 .field {
     display: flex;
     flex-direction: column;
     margin-bottom: 12px;
 }
+
 .field label {
     font-size: .85rem;
-    color: var(--text-soft);
+    color: rgba(245, 245, 251, .75);
     margin-bottom: 6px;
 }
 
@@ -219,123 +114,95 @@ ul, li     { list-style: none; padding: 0; margin: 0; }
 .field textarea {
     width: 100%;
     padding: 10px 16px;
-    border: 1px solid var(--input-border);
-    background: var(--input-bg);
-    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .05);
+    color: #f5f5fb;
     font: inherit;
     font-size: .9rem;
-    border-radius: 9999px;       /* pill */
+    border-radius: 9999px;
     outline: none;
-    transition: border-color .15s ease, background .15s ease;
 }
+
 .field textarea {
-    border-radius: 14px;          /* moins arrondi que les inputs */
+    border-radius: 14px;
     resize: vertical;
     min-height: 100px;
 }
+
 .field input::placeholder,
-.field textarea::placeholder {
-    color: var(--text-mute);
-}
+.field textarea::placeholder { color: rgba(245, 245, 251, .55); }
+
 .field input:focus,
 .field textarea:focus {
-    border-color: var(--accent);
+    border-color: #fb923c;
     background: rgba(255, 255, 255, .08);
 }
 
-/* ---------- Compteur de caractères ---------- */
 .counter {
     display: block;
     margin-top: 6px;
     text-align: right;
-    color: var(--text-mute);
+    color: rgba(245, 245, 251, .55);
     font-size: .8rem;
 }
-.counter.counter-warn { color: var(--error); font-weight: 600; }
 
-/* ---------- Checkbox RGPD ---------- */
-.field-check {
+.counter.counter-warn { color: #ef4444; font-weight: 600; }
+
+.checkbox-label {
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 16px 0;
     font-size: .85rem;
-    color: var(--text-soft);
-}
-.field-check input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent);
+    color: rgba(245, 245, 251, .75);
     cursor: pointer;
-}
-.field-check label {
-    cursor: pointer;
-    margin: 0;
 }
 
-/* ---------- Bouton submit ---------- */
 .btn-submit {
     display: block;
     width: 100%;
     padding: 12px 24px;
-    background: var(--glass-bg-2);
-    color: var(--text);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, .12);
+    color: #f5f5fb;
+    border: 1px solid rgba(255, 255, 255, .18);
     border-radius: 14px;
     cursor: pointer;
     font: inherit;
     font-size: .95rem;
     font-weight: 600;
-    transition: background .15s ease, transform .1s ease;
 }
-.btn-submit:hover { background: rgba(255, 255, 255, .18); }
-.btn-submit:active { transform: translateY(1px); }
 
-/* ============================================================================
-   ZONE DES MESSAGES DE RETOUR (succès / erreur)
-   ============================================================================ */
+.btn-submit:hover { background: rgba(255, 255, 255, .18); }
+
 .messages { margin-bottom: 14px; }
 .messages:empty { display: none; }
 
 .msg-success {
     padding: 10px 16px;
     background: rgba(34, 197, 94, .15);
-    border: 1px solid var(--success);
-    color: var(--success);
+    border: 1px solid #22c55e;
+    color: #22c55e;
     border-radius: 12px;
     text-align: center;
     font-size: .9rem;
-    font-weight: 500;
-    margin: 0;
 }
+
 .msg-error {
     padding: 10px 16px;
     background: rgba(239, 68, 68, .12);
-    border: 1px solid var(--error);
+    border: 1px solid #ef4444;
     color: #fca5a5;
     border-radius: 12px;
     font-size: .85rem;
-    margin: 0 0 6px;
+    margin-bottom: 6px;
 }
+
 .msg-error-list { display: flex; flex-direction: column; gap: 6px; }
 
-/* ============================================================================
-   SECTION MESSAGES PRÉCÉDENTS
-   ============================================================================ */
-.messages-section h2 {
-    font-size: 1.1rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px;
-}
-.messages-section h2 .count-info {
-    color: var(--text-soft);
-    font-weight: 400;
-    font-size: .9rem;
-}
+.messages-section h2 { font-size: 1.1rem; }
 
-/* ---------- Liste des posts ---------- */
+.count-info { color: rgba(245, 245, 251, .75); font-size: .9rem; }
+
 .post-list {
     display: flex;
     flex-direction: column;
@@ -343,9 +210,8 @@ ul, li     { list-style: none; padding: 0; margin: 0; }
     margin-top: 12px;
 }
 
-.post {
-    padding: 16px 20px;
-}
+.post { padding: 16px 20px; }
+
 .post-head {
     display: flex;
     flex-wrap: wrap;
@@ -353,47 +219,41 @@ ul, li     { list-style: none; padding: 0; margin: 0; }
     gap: 10px;
     margin-bottom: 10px;
     padding-bottom: 8px;
-    border-bottom: 1px dashed var(--glass-border);
+    border-bottom: 1px dashed rgba(255, 255, 255, .18);
 }
-.post-name { font-weight: 700; color: var(--text); }
-.post-mail { color: var(--accent); font-size: .85rem; }
+
+.post-name { font-weight: 700; }
+.post-mail { color: #fb923c; font-size: .85rem; }
+
 .post-date {
     margin-left: auto;
-    color: var(--text-mute);
+    color: rgba(245, 245, 251, .55);
     font-size: .8rem;
     font-style: italic;
 }
+
 .post-msg {
-    color: var(--text);
-    white-space: pre-line;        /* respecte les retours à la ligne — BONUS */
+    white-space: pre-line;
     word-wrap: break-word;
-    overflow-wrap: break-word;
-    margin: 0;
     line-height: 1.6;
 }
 
-/* ============================================================================
-   PAGINATION
-   ============================================================================ */
 .pagination {
     text-align: center;
     margin: 16px 0;
-    color: var(--text-soft);
+    color: rgba(245, 245, 251, .75);
     font-size: .9rem;
 }
+
 .pagination a {
-    color: var(--accent);
+    color: #fb923c;
     text-decoration: none;
     padding: 0 4px;
 }
-.pagination a:hover { color: var(--accent-hover); text-decoration: underline; }
 
-/* ============================================================================
-   RESPONSIVE — TABLETTE (>= 480px)
-   - labels à côté des champs
-   ============================================================================ */
+.pagination a:hover { text-decoration: underline; }
+
 @media (min-width: 480px) {
-
     .container { padding: 16px 24px 64px; gap: 28px; }
 
     .field {
@@ -401,40 +261,20 @@ ul, li     { list-style: none; padding: 0; margin: 0; }
         grid-template-columns: 100px 1fr;
         align-items: center;
         gap: 14px;
-        margin-bottom: 12px;
-    }
-    .field label {
-        margin: 0;
-        text-align: right;
-    }
-    .field .counter {
-        grid-column: 2 / 3;
-    }
-    /* textarea : alignement avec le label en haut */
-    .field:has(textarea) {
-        align-items: start;
-    }
-    .field:has(textarea) label {
-        padding-top: 10px;
     }
 
-    .field-check { padding-left: 114px; }   /* aligné avec les inputs */
+    .field label { margin: 0; text-align: right; }
+    .field .counter { grid-column: 2 / 3; }
+
+    .field:has(textarea) { align-items: start; }
+    .field:has(textarea) label { padding-top: 10px; }
 
     .btn-submit { margin-left: 114px; width: calc(100% - 114px); }
 
-    .illustration {
-        width: 140px;
-        height: 140px;
-        
-    }
+    .illustration { width: 140px; height: 140px; }
 }
 
-/* ============================================================================
-   RESPONSIVE — DESKTOP (>= 960px)
-   - form (image au-dessus) à GAUCHE, messages à DROITE
-   ============================================================================ */
 @media (min-width: 960px) {
-
     .container {
         flex-direction: row;
         align-items: flex-start;
@@ -442,33 +282,15 @@ ul, li     { list-style: none; padding: 0; margin: 0; }
         gap: 32px;
     }
 
-    .col-left {
-        flex: 0 0 380px;
-        position: sticky;
-        top: 24px;
-    }
+    .form-card { flex: 0 0 380px; }
+    .messages-section { flex: 1; min-width: 0; }
 
-    .messages-section {
-        flex: 1;
-        min-width: 0;        /* indispensable en flex pour que le contenu wrap */
-    }
-
-    /* Dans la colonne de gauche (380px), les labels au-dessus pour ne pas
-       écraser les inputs. On annule le grid de la version tablette. */
-    .col-left .field {
+    .form-card .field {
         display: flex;
         flex-direction: column;
         gap: 4px;
     }
-    .col-left .field label {
-        text-align: left;
-        font-size: .8rem;
-    }
-    .col-left .field-check { padding-left: 0; }
-    .col-left .btn-submit  { margin-left: 0; width: 100%; }
 
-    .form-card {
-    width: 30%;
-}
-    
+    .form-card .field label { text-align: left; font-size: .8rem; }
+    .form-card .btn-submit { margin-left: 0; width: 100%; }
 }

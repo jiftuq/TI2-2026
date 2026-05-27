@@ -57,12 +57,12 @@ function addGuestbook(PDO $db,
 
         $stmt = $db->prepare($sql);
 
-        $stmt->bindValue(":firstname", $firstname, PDO::PARAM_STR);
-        $stmt->bindValue(":lastname",  $lastname,  PDO::PARAM_STR);
-        $stmt->bindValue(":usermail",  $usermail,  PDO::PARAM_STR);
-        $stmt->bindValue(":phone",     $phone,     PDO::PARAM_STR);
-        $stmt->bindValue(":postcode",  $postcode,  PDO::PARAM_STR);
-        $stmt->bindValue(":message",   $message,   PDO::PARAM_STR);
+        $stmt->bindValue(":firstname", $firstname, );
+        $stmt->bindValue(":lastname",  $lastname,  );
+        $stmt->bindValue(":usermail",  $usermail,  );
+        $stmt->bindValue(":phone",     $phone,     );
+        $stmt->bindValue(":postcode",  $postcode,  );
+        $stmt->bindValue(":message",   $message,   );
 
         $stmt->execute();
 

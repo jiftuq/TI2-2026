@@ -112,20 +112,15 @@ function dateFr(string $datemysql): string
 
    
     <section class="messages-section">
+        <h2>Messages récents - 
+        <?php
+            if ($nbTotal === 0) echo "pas encore de message";
+            elseif ($nbTotal === 1) echo "il y a actuellement 1 message";
+            else echo "il y a actuellement $nbTotal messages";
+        ?>
+    </h2>
 
-        <h2>Les messages précédents</h2>
-
-        <p class="count-info">
-            <?php
-            if ($nbTotal === 0) {
-                echo "pas encore de message";
-            } elseif ($nbTotal === 1) {
-                echo "Il y a 1 message";
-            } else {
-                echo "Il y a " . $nbTotal . " messages";
-            }
-            ?>
-        </p>
+        
 
         <?php
         

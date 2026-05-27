@@ -33,12 +33,12 @@ function addGuestbook(PDO $db,
 
    
 
-    $firstname = htmlspecialchars($firstname, );
-    $lastname  = htmlspecialchars($lastname,  );
-    $usermail  = htmlspecialchars($usermail,  );
-    $phone     = htmlspecialchars($phone,     );
-    $postcode  = htmlspecialchars($postcode,  );
-    $message   = htmlspecialchars($message,   );
+    $firstname = htmlspecialchars($firstname,);
+    $lastname  = htmlspecialchars($lastname,);
+    $usermail  = htmlspecialchars($usermail,);
+    $phone     = htmlspecialchars($phone,);
+    $postcode  = htmlspecialchars($postcode,);
+    $message   = htmlspecialchars($message,);
 
    
     if (strlen($firstname) > 100) return false;
@@ -57,12 +57,12 @@ function addGuestbook(PDO $db,
 
         $stmt = $db->prepare($sql);
 
-        $stmt->bindValue(":firstname", $firstname, );
-        $stmt->bindValue(":lastname",  $lastname,  );
-        $stmt->bindValue(":usermail",  $usermail,  );
-        $stmt->bindValue(":phone",     $phone,     );
-        $stmt->bindValue(":postcode",  $postcode,  );
-        $stmt->bindValue(":message",   $message,   );
+        $stmt->bindValue(":firstname", $firstname,);
+        $stmt->bindValue(":lastname",  $lastname,);
+        $stmt->bindValue(":usermail",  $usermail,);
+        $stmt->bindValue(":phone",     $phone,);
+        $stmt->bindValue(":postcode",  $postcode,);
+        $stmt->bindValue(":message",   $message,);
 
         $stmt->execute();
 

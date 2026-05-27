@@ -30,7 +30,7 @@ try {
     $db = new PDO($dsn, DB_LOGIN, DB_PWD, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES   => false,
+        
     ]);
 } catch (Exception $e) {
     

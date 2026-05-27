@@ -161,7 +161,7 @@ function getGuestbookPagination(PDO $db, int $pageActu = 1, int $limit = 5): arr
         return $messages;
 
     } catch (PDOException $e) {
-        die("Erreur SQL (SELECT pagination) : " . $e->getMessage());
+        die($e->getMessage());
     }
 }
 

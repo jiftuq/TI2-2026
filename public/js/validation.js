@@ -261,10 +261,11 @@ $(function () {
     });
 
     
-    $('#toggle-theme').on('click',function(){
-        $('body').toggleClass('dark-mode');
-    });
-
+    $('#toggle-theme').on('click', function () {
+    $('body').toggleClass('dark-mode');
+    const isDark = $('body').hasClass('dark-mode');
+    $(this).text(isDark ? '☀️ White Mode' : '🌙 Dark Mode');
+});
     
    
 

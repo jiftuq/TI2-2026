@@ -37,13 +37,7 @@ try {
     die($e->getMessage());
 }
 
-/* -----------------------------------------------------------------------------
- * 3) Traitement du formulaire si soumission POST
- *    Variable $messageRetour utilisée par la vue :
- *      - null   : pas de soumission
- *      - true   : insertion OK   → message vert
- *      - false  : insertion KO   → message rouge
- * --------------------------------------------------------------------------- */
+
 $messageRetour = null;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

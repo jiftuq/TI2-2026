@@ -42,6 +42,12 @@ try {
 }
 
 
+$insertOk = null;
+
+
+if (isset($_GET['inserted'])) {
+    $insertOk = true;
+}
 
 if (isset(
     $_POST["firstname"],

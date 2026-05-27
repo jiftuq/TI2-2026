@@ -267,8 +267,6 @@ $(function () {
     $(this).text(isDark ? '☀️ White Mode' : '🌙 Dark Mode');
 });
     
-   
-
-});
+   });
 
 

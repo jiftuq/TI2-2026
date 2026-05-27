@@ -11,7 +11,7 @@
  * @param string $phone        <= 20, uniquement numérique
  * @param string $postcode     == 4, uniquement numérique
  * @param string $message      <= 500
- * @return bool true si l'insertion a réussi, false sinon
+ * @return bool  true si l'insertion a réussi, false sinon
  
  */
 function addGuestbook(PDO $db,
@@ -124,7 +124,7 @@ function getNbTotalGuestbook(PDO $db): int
         return (int)($row["nb"] ?? 0);
 
     } catch (PDOException $e) {
-        die("Erreur SQL (COUNT) : " . $e->getMessage());
+        die($e->getMessage());
     }
 }
 

@@ -60,42 +60,42 @@ function dateFr(string $datemysql): string
 
                 <div class="field" id="f-firstname">
                     <label for="firstname">Prénom</label>
-                    <span class="hint"></span>
+                    
                     <input type="text" id="firstname" name="firstname"
                            maxlength="100" placeholder="Ex : John" required>
                 </div>
 
                 <div class="field" id="f-lastname">
                     <label for="lastname">Nom</label>
-                    <span class="hint"></span>
+                    
                     <input type="text" id="lastname" name="lastname"
                            maxlength="100" placeholder="Ex : Smith" required>
                 </div>
 
                 <div class="field" id="f-usermail">
                     <label for="usermail">E-mail</label>
-                    <span class="hint"></span>
+                    
                     <input type="email" id="usermail" name="usermail"
                            maxlength="200" placeholder="john.smith@example.com" required>
                 </div>
 
                 <div class="field" id="f-postcode">
                     <label for="postcode">Code postal</label>
-                    <span class="hint"></span>
+                    
                     <input type="text" id="postcode" name="postcode"
                            maxlength="4" placeholder="1000" inputmode="numeric" required>
                 </div>
 
                 <div class="field" id="f-phone">
                     <label for="phone">Téléphone</label>
-                    <span class="hint"></span>
+                    
                     <input type="tel" id="phone" name="phone"
                            maxlength="20" placeholder="0498 15 08 82" required>
                 </div>
 
                 <div class="field" id="f-message">
                     <label for="message">Message</label>
-                    <span class="hint"></span>
+                    
                     <textarea id="message" name="message"
                               maxlength="300" rows="4"
                               placeholder="Un petit mot..." required></textarea>

@@ -258,12 +258,12 @@ body.dark-mode .card {
 
     .field {
         display: grid;
-        grid-template-columns: 100px 1fr;
+        
         align-items: center;
         gap: 14px;
     }
 
-    .field label { margin: 0; text-align: right; }
+    .field label { margin: 0; text-align: left; }
     .field .counter { grid-column: 2 / 3; }
 
     .field:has(textarea) { align-items: start; }

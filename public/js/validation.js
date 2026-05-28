@@ -1,125 +1,5 @@
 $(document).ready(function () {
-  const REGEX = {
-    // regex pour nom et prénom
-    username: /^[a-zA-Z]{2,100}$/,
-    // regex pour adresse mail
-    email: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/,
-    // regex pour code postal
-    postCode: /^[0-9]{4}$/,
-    // regex pour numero gsm
-    gsm: /^(?:\+324|00324|04)\d{8}$/,
-  };
-
-  // verification du firstname en temps réel
-  $("#firstname").on("keyup", function () {
-    const val = $(this).val();
-    const $field = $("#f-firstname");
-    const $hint = $field.find(".hint");
-
-    $field.removeClass("ok error");
-
-    if (val === "") {
-      $hint.text("2 à 100 caractères : lettres");
-      return;
-    }
-
-    if (REGEX.username.test(val)) {
-      $field.addClass("ok");
-      $hint.text("✓ prénom valide");
-    } else {
-      $field.addClass("error");
-      $hint.text("✗ 2-100 caractères, uniquement lettres");
-    }
-  });
-
-  // verification du lastname en temps réel
-  $("#lastname").on("keyup", function () {
-    const val = $(this).val();
-    const $field = $("#f-lastname");
-    const $hint = $field.find(".hint");
-
-    $field.removeClass("ok error");
-
-    if (val === "") {
-      $hint.text("2 à 100 caractères : lettres");
-      return;
-    }
-
-    if (REGEX.username.test(val)) {
-      $field.addClass("ok");
-      $hint.text("✓ nom valide");
-    } else {
-      $field.addClass("error");
-      $hint.text("✗ 2-100 caractères, uniquement lettres");
-    }
-  });
-
   
-
-  $("#usermail").on("keyup", function () {
-    const val = $(this).val();
-    const $field = $("#f-usermail"); 
-    const $hint = $field.find(".hint");
-
-    $field.removeClass("ok error");
-
-    if (val === "") {
-      $hint.text("Format : nom@domaine.ext");
-      return;
-    }
-
-    if (REGEX.email.test(val)) {
-      $field.addClass("ok");
-      $hint.text("✓ Email valide");
-    } else {
-      $field.addClass("error");
-      $hint.text("✗ Format invalide (ex : nom@domaine.com)");
-    }
-  });
-
-  // validation de code postal
-  $("#postcode").on("keyup", function () {
-    const val = $(this).val();
-    const $field = $("#f-postcode");
-    const $hint = $field.find(".hint");
-
-    $field.removeClass("ok error");
-
-    if (val === "") {
-      $hint.text("doit être composé de 4 chiffres");
-      return;
-    }
-
-    if (REGEX.postCode.test(val)) {
-      $field.addClass("ok");
-      $hint.text("✓ code postal valide");
-    } else {
-      $field.addClass("error");
-      $hint.text("✗ Format invalide (ex : 1080)");
-    }
-  });
-
-  // validation du numero de gsm
-  $("#phone").on("keyup", function () {
-    const val = $(this).val();
-    const $field = $("#f-phone");
-    const $hint = $field.find(".hint");
-
-    $field.removeClass("ok error");
-
-    if (val === "") {
-      $hint.text("doit être composé de 8 chiffres après le 4");
-      return;
-    }
-
-    if (REGEX.gsm.test(val)) {
-      $field.addClass("ok");
-      $hint.text("✓ gsm valide");
-    } else {
-      $field.addClass("error");
-      $hint.text("✗ Format invalide (ex : 0032… ou +324… ou 04…)");
-    }
-  });
 
   
   $("#message").on("input", function () {
@@ -133,4 +13,64 @@ $(document).ready(function () {
     const isDark = $("body").hasClass("dark-mode");
     $(this).text(isDark ? "☀️ White Mode" : "🌙 Dark Mode");
   });
+});
+
+$(function () {
+
+    
+
+    // ---- Validation frontend du formulaire ----
+    $('#guestbook-form').on('submit', function (e) {
+
+        $('.error-js').remove();
+
+        var valid = true;
+
+        var email = $('#usermail').val().trim();
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email) || email.length > 120) {
+            $('#usermail').after('<p class="error error-js">Email invalide ou trop long (max 120 caractères)</p>');
+            valid = false;
+        }
+
+        var firstname = $('#firstname').val().trim();
+        if (firstname.length < 2 || firstname.length > 100) {
+            $('#firstname').after('<p class="error error-js">Prénom : entre 2 et 100 caractères</p>');
+            valid = false;
+        }
+
+        var lastname = $('#lastname').val().trim();
+        if (lastname.length < 2 || lastname.length > 100) {
+            $('#lastname').after('<p class="error error-js">Nom : entre 2 et 100 caractères</p>');
+            valid = false;
+        }
+        var postcode = $('#postcode').val().trim();
+        if (postcode.length !== 4 || !/^\d{4}$/.test(postcode)) {
+            $('#postcode').after('<p class="error error-js">Code postal : 4 chiffres uniquement</p>');
+            valid = false;
+        }
+
+        var phone = $('#phone').val().trim();
+        if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
+            $('#phone').after('<p class="error error-js">Numéro de téléphone : 10 chiffres uniquement</p>');
+            valid = false;
+        }
+
+        var message = $('#message').val().trim();
+        if (message.length < 5 || message.length > 500) {
+            $('#message').after('<p class="error error-js">Message : entre 5 et 500 caractères</p>');
+            valid = false;
+        }
+
+        
+        if (!rgpd) {
+            $('#rgpd').after('<p class="error error-js">Veuillez accepter le stockage des données</p>');
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault();
+        }
+    });
+
 });

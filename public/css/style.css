@@ -294,3 +294,18 @@ body.dark-mode .card {
     .form-card .field label { text-align: left; font-size: .8rem; }
     .form-card .btn-submit { margin-left: 0; width: 100%; }
 }
+
+.hint {
+  margin-top: 6px;
+  font-family: monospace;
+  font-size: 11px;
+  min-height: 14px;
+}
+.error {
+  color: #ff4d2e;
+  font-weight: bold;
+}
+.ok {
+  color: #43ff2a;
+  font-weight: bold;
+}

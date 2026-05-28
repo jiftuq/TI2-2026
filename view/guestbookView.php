@@ -2,7 +2,7 @@
 
 function dateFr(string $datemysql): string
 {
-   
+
     $ts = strtotime($datemysql);
     if ($ts === false) return $datemysql;
     return "Le ( " . date("d/m/Y", $ts) . " à " . date("H\\hi", $ts) . " )";
@@ -35,7 +35,7 @@ function dateFr(string $datemysql): string
 
 <main class="container">
 
-    
+
     <section class="card form-card">
 
         <img src="img/favicon.png" alt="Illustration livre d'or" class="illustration">
@@ -43,10 +43,10 @@ function dateFr(string $datemysql): string
         <div class="form-wrapper">
             <h2>Laissez votre message</h2>
 
-            
+
             <div id="messages" class="messages" role="alert" aria-live="polite">
                 <?php
-                
+
                 if ($insertOk === true) {
                     echo '<p class="msg-success">Merci pour votre nouveau message</p>';
                 } elseif ($insertOk === false) {
@@ -55,59 +55,59 @@ function dateFr(string $datemysql): string
                 ?>
             </div>
 
-            
+
             <form id="guestbook-form" action="" method="POST" novalidate>
 
                 <div class="field" id="f-firstname">
                     <label for="firstname">Prénom</label>
-                    
                     <input type="text" id="firstname" name="firstname"
                            maxlength="100" placeholder="Ex : John" required>
+                    <small class="hint">3 à 100 caractères : lettres</small>
                 </div>
 
                 <div class="field" id="f-lastname">
                     <label for="lastname">Nom</label>
-                    
                     <input type="text" id="lastname" name="lastname"
                            maxlength="100" placeholder="Ex : Smith" required>
+                    <small class="hint">3 à 100 caractères : lettres</small>
                 </div>
 
                 <div class="field" id="f-usermail">
                     <label for="usermail">E-mail</label>
-                    
                     <input type="email" id="usermail" name="usermail"
                            maxlength="200" placeholder="john.smith@example.com" required>
+                    <small class="hint">Format : nom@domaine.ext</small>
                 </div>
 
                 <div class="field" id="f-postcode">
                     <label for="postcode">Code postal</label>
-                    
                     <input type="text" id="postcode" name="postcode"
                            maxlength="4" placeholder="1000" inputmode="numeric" required>
+                    <small class="hint">doit être composé de 4 chiffres</small>
                 </div>
 
                 <div class="field" id="f-phone">
                     <label for="phone">Téléphone</label>
-                    
                     <input type="tel" id="phone" name="phone"
                            maxlength="20" placeholder="0498 15 08 82" required>
+                    <small class="hint">doit être composé de 8 chiffres après le 4</small>
                 </div>
 
                 <div class="field" id="f-message">
                     <label for="message">Message</label>
-                    
                     <textarea id="message" name="message"
                               maxlength="300" rows="4"
                               placeholder="Un petit mot..." required></textarea>
                     <small id="char-counter" class="counter">0 / 300 caractères</small>
                 </div>
+
                 <div class="form-group form-group-checkbox">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="rgpd" id="rgpd" required aria-required="true">
-                            <span class="checkmark"></span>
-                            <span class="checkbox-text">J'accepte le stockage de mes données personnelles.</span>
-                        </label>
-                    </div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="rgpd" id="rgpd" required aria-required="true">
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">J'accepte le stockage de mes données personnelles.</span>
+                    </label>
+                </div>
 
                 <button type="submit" class="btn-submit btn-mono">
                     Envoyer le message
@@ -116,9 +116,9 @@ function dateFr(string $datemysql): string
         </div>
     </section>
 
-   
+
     <section class="messages-section">
-        <h2>Messages récents - 
+        <h2>Messages récents -
         <?php
             if ($nbTotal === 0) echo "pas encore de message";
             elseif ($nbTotal === 1) echo "il y a actuellement 1 message";
@@ -126,10 +126,9 @@ function dateFr(string $datemysql): string
         ?>
     </h2>
 
-        
+
 
         <?php
-        
         if ($htmlPagination !== "") echo $htmlPagination;
         ?>
 
@@ -139,21 +138,20 @@ function dateFr(string $datemysql): string
                     <li class="post-card post card">
                         <div class="post-head">
                             <strong class="post-name">
-                                <?= $post["firstname"] ?> <?= $post["lastname"] ?>
+                                <?= htmlspecialchars($post["firstname"]) ?> <?= htmlspecialchars($post["lastname"]) ?>
                             </strong>
-                            <span class="post-mail"><?= $post["usermail"] ?></span>
+                            <span class="post-mail"><?= htmlspecialchars($post["usermail"]) ?></span>
                             <em class="post-date">
                                 <?= dateFr($post["datemessage"]) ?>
                             </em>
                         </div>
-                        
-                        <p class="post-msg"><?= $post["message"] ?></p>
+
+                        <p class="post-msg"><?= nl2br(htmlspecialchars($post["message"])) ?></p>
                     </li>
                 <?php endforeach; ?>
             </ul>
 
             <?php
-            
             if ($htmlPagination !== "") echo $htmlPagination;
             ?>
         <?php endif; ?>
@@ -167,5 +165,3 @@ function dateFr(string $datemysql): string
 <script src="js/validation.js"></script>
 </body>
 </html>
-
-

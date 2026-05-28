@@ -12,7 +12,6 @@ $(document).ready(function () {
 
   // verification du firstname en temps réel
   $("#firstname").on("keyup", function () {
-    // Ton code ici ↓
     const val = $(this).val();
     const $field = $("#f-firstname");
     const $hint = $field.find(".hint");
@@ -20,21 +19,21 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("3 à 100 caractères : lettres ");
+      $hint.text("3 à 100 caractères : lettres");
       return;
     }
 
     if (REGEX.username.test(val)) {
       $field.addClass("ok");
-      $hint.text("prenom valide");
+      $hint.text("✓ prénom valide");
     } else {
       $field.addClass("error");
       $hint.text("✗ 3-100 caractères, uniquement lettres");
     }
   });
+
   // verification du lastname en temps réel
   $("#lastname").on("keyup", function () {
-    // Ton code ici ↓
     const val = $(this).val();
     const $field = $("#f-lastname");
     const $hint = $field.find(".hint");
@@ -42,13 +41,13 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("3 à 100 caractères : lettres ");
+      $hint.text("3 à 100 caractères : lettres");
       return;
     }
 
     if (REGEX.username.test(val)) {
       $field.addClass("ok");
-      $hint.text("prenom valide");
+      $hint.text("✓ nom valide");
     } else {
       $field.addClass("error");
       $hint.text("✗ 3-100 caractères, uniquement lettres");
@@ -60,9 +59,8 @@ $(document).ready(function () {
   ============================================================ */
 
   $("#usermail").on("keyup", function () {
-    // Ton code ici ↓
     const val = $(this).val();
-    const $field = $("#f-email");
+    const $field = $("#f-usermail"); // <- était #f-email (n'existait pas)
     const $hint = $field.find(".hint");
 
     $field.removeClass("ok error");
@@ -74,7 +72,7 @@ $(document).ready(function () {
 
     if (REGEX.email.test(val)) {
       $field.addClass("ok");
-      $hint.text("Email valide");
+      $hint.text("✓ Email valide");
     } else {
       $field.addClass("error");
       $hint.text("✗ Format invalide (ex : nom@domaine.com)");
@@ -83,7 +81,6 @@ $(document).ready(function () {
 
   // validation de code postal
   $("#postcode").on("keyup", function () {
-    // Ton code ici ↓
     const val = $(this).val();
     const $field = $("#f-postcode");
     const $hint = $field.find(".hint");
@@ -91,13 +88,13 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("doit etre composé de 4 chiffre");
+      $hint.text("doit être composé de 4 chiffres");
       return;
     }
 
     if (REGEX.postCode.test(val)) {
       $field.addClass("ok");
-      $hint.text("code postal valide");
+      $hint.text("✓ code postal valide");
     } else {
       $field.addClass("error");
       $hint.text("✗ Format invalide (ex : 1080)");
@@ -106,7 +103,6 @@ $(document).ready(function () {
 
   // validation du numero de gsm
   $("#phone").on("keyup", function () {
-    // Ton code ici ↓
     const val = $(this).val();
     const $field = $("#f-phone");
     const $hint = $field.find(".hint");
@@ -114,21 +110,57 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("doit etre composé de 8 chiffre apres le 4");
+      $hint.text("doit être composé de 8 chiffres après le 4");
       return;
     }
 
     if (REGEX.gsm.test(val)) {
       $field.addClass("ok");
-      $hint.text("gsm valide");
+      $hint.text("✓ gsm valide");
     } else {
       $field.addClass("error");
-      $hint.text("✗ Format invalide (ex : 00324** ou +324*** ou 04***)");
+      $hint.text("✗ Format invalide (ex : 0032… ou +324… ou 04…)");
     }
   });
-  $('#toggle-theme').on('click', function () {
-    $('body').toggleClass('dark-mode');
-    const isDark = $('body').hasClass('dark-mode');
-    $(this).text(isDark ? '☀️ White Mode' : '🌙 Dark Mode');
-});
+
+  /* ============================================================
+  COMPTEUR DE CARACTÈRES — message
+  ============================================================ */
+  $("#message").on("input", function () {
+    const len = $(this).val().length;
+    $("#char-counter").text(len + " / 300 caractères");
+  });
+
+  /* ============================================================
+  GARDE-FOU À LA SOUMISSION (le formulaire est en novalidate)
+  ============================================================ */
+  $("#guestbook-form").on("submit", function (e) {
+    const checks = [
+      REGEX.username.test($("#firstname").val()),
+      REGEX.username.test($("#lastname").val()),
+      REGEX.email.test($("#usermail").val()),
+      REGEX.postCode.test($("#postcode").val()),
+      REGEX.gsm.test($("#phone").val()),
+      $("#message").val().trim() !== "",
+      $("#rgpd").is(":checked"),
+    ];
+
+    if (checks.includes(false)) {
+      e.preventDefault();
+      // force l'affichage du feedback sur les champs déjà remplis
+      $("#firstname, #lastname, #usermail, #postcode, #phone").trigger("keyup");
+      $("#messages").html(
+        '<p class="msg-error">Merci de corriger les champs invalides avant d\'envoyer.</p>'
+      );
+    }
+  });
+
+  /* ============================================================
+  THEME
+  ============================================================ */
+  $("#toggle-theme").on("click", function () {
+    $("body").toggleClass("dark-mode");
+    const isDark = $("body").hasClass("dark-mode");
+    $(this).text(isDark ? "☀️ White Mode" : "🌙 Dark Mode");
+  });
 });

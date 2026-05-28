@@ -1,7 +1,7 @@
 $(document).ready(function () {
   const REGEX = {
     // regex pour nom et prénom
-    username: /^[a-zA-Z]{3,100}$/,
+    username: /^[a-zA-Z]{2,100}$/,
     // regex pour adresse mail
     email: /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/,
     // regex pour code postal
@@ -19,7 +19,7 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("3 à 100 caractères : lettres");
+      $hint.text("2 à 100 caractères : lettres");
       return;
     }
 
@@ -28,7 +28,7 @@ $(document).ready(function () {
       $hint.text("✓ prénom valide");
     } else {
       $field.addClass("error");
-      $hint.text("✗ 3-100 caractères, uniquement lettres");
+      $hint.text("✗ 2-100 caractères, uniquement lettres");
     }
   });
 
@@ -41,7 +41,7 @@ $(document).ready(function () {
     $field.removeClass("ok error");
 
     if (val === "") {
-      $hint.text("3 à 100 caractères : lettres");
+      $hint.text("2 à 100 caractères : lettres");
       return;
     }
 
@@ -50,7 +50,7 @@ $(document).ready(function () {
       $hint.text("✓ nom valide");
     } else {
       $field.addClass("error");
-      $hint.text("✗ 3-100 caractères, uniquement lettres");
+      $hint.text("✗ 2-100 caractères, uniquement lettres");
     }
   });
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
 
   $("#usermail").on("keyup", function () {
     const val = $(this).val();
-    const $field = $("#f-usermail"); // <- était #f-email (n'existait pas)
+    const $field = $("#f-usermail"); 
     const $hint = $field.find(".hint");
 
     $field.removeClass("ok error");

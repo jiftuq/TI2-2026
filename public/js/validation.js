@@ -54,9 +54,7 @@ $(document).ready(function () {
     }
   });
 
-  /* ============================================================
-  VALIDATION TEMPS RÉEL — email
-  ============================================================ */
+  
 
   $("#usermail").on("keyup", function () {
     const val = $(this).val();
@@ -123,41 +121,13 @@ $(document).ready(function () {
     }
   });
 
-  /* ============================================================
-  COMPTEUR DE CARACTÈRES — message
-  ============================================================ */
+  
   $("#message").on("input", function () {
     const len = $(this).val().length;
     $("#char-counter").text(len + " / 300 caractères");
   });
 
-  /* ============================================================
-  GARDE-FOU À LA SOUMISSION (le formulaire est en novalidate)
-  ============================================================ */
-  $("#guestbook-form").on("submit", function (e) {
-    const checks = [
-      REGEX.username.test($("#firstname").val()),
-      REGEX.username.test($("#lastname").val()),
-      REGEX.email.test($("#usermail").val()),
-      REGEX.postCode.test($("#postcode").val()),
-      REGEX.gsm.test($("#phone").val()),
-      $("#message").val().trim() !== "",
-      $("#rgpd").is(":checked"),
-    ];
-
-    if (checks.includes(false)) {
-      e.preventDefault();
-      // force l'affichage du feedback sur les champs déjà remplis
-      $("#firstname, #lastname, #usermail, #postcode, #phone").trigger("keyup");
-      $("#messages").html(
-        '<p class="msg-error">Merci de corriger les champs invalides avant d\'envoyer.</p>'
-      );
-    }
-  });
-
-  /* ============================================================
-  THEME
-  ============================================================ */
+  
   $("#toggle-theme").on("click", function () {
     $("body").toggleClass("dark-mode");
     const isDark = $("body").hasClass("dark-mode");

@@ -42,11 +42,14 @@ function addGuestbook(PDO $db,
 
    
     if (strlen($firstname) > 100) return false;
+    if (strlen($firstname) < 2) return false;
     if (strlen($lastname)  > 100) return false;
+    if (strlen($lastname)  < 2) return false;
     if (strlen($usermail)  > 200) return false;
-    if (strlen($phone)     >  20) return false;
+    if (strlen($phone)     !== 10) return false;
     if (strlen($postcode)  !==  4) return false;
     if (strlen($message)   > 500) return false;
+    if (strlen($message)   < 5) return false;
 
    
     try {

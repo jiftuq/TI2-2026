@@ -63,8 +63,8 @@ $(function () {
         }
 
         
-        if (!rgpd) {
-            $('#rgpd').after('<p class="error error-js">Veuillez accepter le stockage des données</p>');
+        if (!$('#rgpd').is(':checked')) {
+            $('#rgpd').after('<p class="error error-js">Veuillez accepter le stockage de vos données</p>');
             valid = false;
         }
 

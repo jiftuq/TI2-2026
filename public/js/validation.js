@@ -146,76 +146,82 @@
 
 
 $(document).ready(function () {
-  
 
-  
-  $("#message").on("input", function () {
-    const len = $(this).val().length;
-    $("#char-counter").text(len + " / 300 caractères");
-  });
+    // ---------- Compteur de caractères ----------
+    $('#message').on('input', function () {
+        $('#char-counter').text($(this).val().length + ' / 300 caractères');
+    });
 
-  
-  $("#toggle-theme").on("click", function () {
-    $("body").toggleClass("dark-mode");
-    const isDark = $("body").hasClass("dark-mode");
-    $(this).text(isDark ? "☀️ White Mode" : "🌙 Dark Mode");
-  });
-});
+    // ---------- Dark mode ----------
+    $('#toggle-theme').on('click', function () {
+        $('body').toggleClass('dark-mode');
+        const isDark = $('body').hasClass('dark-mode');
+        $(this).text(isDark ? '☀️ White Mode' : '🌙 Dark Mode');
+    });
 
-$(function () {
-    // ---- Validation frontend du formulaire ----
+    // ---------- Fade des messages PHP au chargement ----------
+    fadeMessages();
+
+    // ---------- Validation du formulaire ----------
     $('#guestbook-form').on('submit', function (e) {
 
-        $('.error-js').remove();
+        const $messages = $('#messages');
+        $messages.empty();        // on vide la zone à chaque tentative
+        let valid = true;
 
-        var valid = true;
-
-        var email = $('#usermail').val().trim();
-        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email) || email.length > 120) {
-            $('#messages').after('<p class="msg-error">Email invalide ou trop long (max 120 caractères)</p>');
+        function addError(txt) {
+            $messages.append('<p class="msg-error">' + txt + '</p>');
             valid = false;
         }
 
-        var firstname = $('#firstname').val().trim();
+        const firstname = $('#firstname').val().trim();
         if (firstname.length < 2 || firstname.length > 100) {
-            $('#messages').after('<p class="msg-error">Prénom : entre 2 et 100 caractères</p>');
-            valid = false;
+            addError('Prénom : entre 2 et 100 caractères');
         }
 
-        var lastname = $('#lastname').val().trim();
+        const lastname = $('#lastname').val().trim();
         if (lastname.length < 2 || lastname.length > 100) {
-            $('#messages').after('<p class="msg-error">Nom : entre 2 et 100 caractères</p>');
-            valid = false;
-        }
-        var postcode = $('#postcode').val().trim();
-        if (postcode.length !== 4 || !/^\d{4}$/.test(postcode)) {
-            $('#messages').after('<p class="msg-error">Code postal : 4 chiffres uniquement</p>');
-            valid = false;
+            addError('Nom : entre 2 et 100 caractères');
         }
 
-        var phone = $('#phone').val().trim();
-        var phoneRegex = /^(?:\+324|00324|04)\d{8}$/;
-        if (phone.length !== 10 || !phoneRegex.test(phone)) {
-            $('#messages').after('<p class="msg-error">Numéro de téléphone : 10 chiffres uniquement</p>');
-            valid = false;
+        const email = $('#usermail').val().trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) {
+            addError('Email invalide ou trop long');
         }
 
-        var message = $('#message').val().trim();
+        const postcode = $('#postcode').val().trim();
+        if (!/^\d{4}$/.test(postcode) || postcode < 1000) {
+            addError('Code postal : 4 chiffres (1000 à 9999)');
+        }
+
+        // téléphone : on nettoie AVANT de tester
+        const phone = $('#phone').val().replace(/[\s.\-]/g, '');
+        if (!/^(?:\+32|0032|0)4\d{8}$/.test(phone)) {
+            addError('Numéro de téléphone belge invalide');
+        }
+
+        const message = $('#message').val().trim();
         if (message.length < 5 || message.length > 300) {
-            $('#messages').after('<p class="msg-error">Message : entre 5 et 300 caractères</p>');
-            valid = false;
+            addError('Message : entre 5 et 300 caractères');
         }
 
-        
         if (!$('#rgpd').is(':checked')) {
-            $('#messages').after('<p class="msg-error">Veuillez accepter le stockage de vos données</p>');
-            valid = false;
+            addError('Veuillez accepter le stockage de vos données');
         }
 
         if (!valid) {
-            e.preventDefault();
+            e.preventDefault();   // <-- BLOQUE l'envoi vers PHP / la DB
+            fadeMessages();       // les erreurs disparaissent après 2 s
         }
     });
 
 });
+
+// Fade out après 2 s de tout ce qui est dans #messages
+function fadeMessages() {
+    setTimeout(function () {
+        $('#messages').children().fadeOut(400, function () {
+            $(this).remove();
+        });
+    }, 2000);
+}
